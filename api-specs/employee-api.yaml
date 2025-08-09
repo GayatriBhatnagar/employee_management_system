@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  title: Employee API
+  version: 1.0.0
+paths:
+  /employees:
+    get:
+     summary: "Get All Employees"
+     operationId: "getEmployees"
+     responses:
+         200:
+            description: "A list of Employees"
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                      $ref: '#/components/schemas/Employee'
+components:
+  schemas:
+    Employee:
+        type: object
+        properties:
+          id:
+            type: integer
+          name: 
+             type: string
+          department:
+              type: string
