@@ -1,6 +1,7 @@
 package com.emp.management.serviceImpl;
 
 
+import com.emp.management.dto.EmployeeOldestTenureResponse;
 import com.emp.management.dto.EmployeeRequest;
 import com.emp.management.dto.EmployeeResponse;
 import com.emp.management.entity.Department;
@@ -18,6 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+
 //security + logging + validations + pagination
 @Service
 @Transactional
@@ -29,11 +34,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final SalaryRepo salaryRepo;
     private EmployeeMapper employeeMapper;
 
-    public EmployeeServiceImpl(EmployeeRepo employeeRepo, JobRepo jobRepo, DepartmentRepo departmentRepo, SalaryRepo salaryRepo) {
+    public EmployeeServiceImpl(EmployeeRepo employeeRepo, JobRepo jobRepo, DepartmentRepo departmentRepo, SalaryRepo salaryRepo, EmployeeMapper employeeMapper) {
         this.employeeRepo = employeeRepo;
         this.jobRepo = jobRepo;
         this.departmentRepo = departmentRepo;
         this.salaryRepo = salaryRepo;
+        this.employeeMapper= employeeMapper;
     }
 
     @Override
@@ -78,6 +84,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public List<EmployeeOldestTenureResponse> getTopFiveOldestEmp() {
+        List<Employee> employeeOldest = employeeRepo.findAll();
+        List<Employee> employeeOldestList =
+                employeeOldest.stream().sorted(Comparator.comparing(Employee::getHireDate)).limit(5).toList();
+        return employeeOldestList.stream().map(employeeMapper::toOldestTenureResponse).toList();
+    }
+
+    @Override
     public EmployeeResponse getEmployeeById(Integer id) {
       return employeeRepo.findById(id).map(employeeMapper::toEmployeeResponse).orElseThrow(
               () -> new EmployeeNotFoundException("Employee not found")
@@ -96,7 +110,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         return builder.build();
-
     }
 
 

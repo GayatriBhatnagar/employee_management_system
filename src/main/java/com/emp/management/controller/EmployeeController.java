@@ -1,6 +1,7 @@
 package com.emp.management.controller;
 
 
+import com.emp.management.dto.EmployeeOldestTenureResponse;
 import com.emp.management.dto.EmployeeRequest;
 import com.emp.management.dto.EmployeeResponse;
 import com.emp.management.service.EmployeeService;
@@ -54,5 +55,13 @@ public class EmployeeController {
     return employeeService.getEmployeeById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 
     }*/
+
+    @GetMapping("/getemployeestop5")
+    public ResponseEntity<List<EmployeeOldestTenureResponse>> getTopFiveOldestEmp(){
+        List<EmployeeOldestTenureResponse> response = employeeService.getTopFiveOldestEmp();
+        return ResponseEntity.ok(response);
+
+    }
+
 
 }
